@@ -3,7 +3,6 @@ import datetime
 import socket
 import utilities
 
-last_check = datetime.datetime.now()
 mirror = None
 
 network = 'daemonic.foonetic.net'
@@ -43,10 +42,9 @@ while True:
         irc.send('PRIVMSG #mnresistance :Stopping attack reporting (Tell me "BlueBot go!" to start)\r\n' )
         mirror = None
         
-    if mirror and datetime.datetime.now() - last_check > datetime.timedelta(0,20):
+    if mirror:
         attacks = list(mirror.attackgen())
         for attack in attacks:
             irc.send('PRIVMSG #mnresistance :' + str(attack)+'\r\n')
-        last_check = datetime.datetime.now()
     
     time.sleep(1)
