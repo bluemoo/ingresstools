@@ -2,12 +2,9 @@ from __future__ import print_function
 import requests
 import json
 import time
+import settings
 
-CSRF_TOKEN = ''
-SESSION_ID = ''
 SLEEP_SECONDS = 20
-LOGFILE = 'actions.log'
-STATEFILE = 'actions.state'
 
 class UnexpectedResultException(Exception):
     pass
@@ -16,15 +13,20 @@ class IngressActionMonitor():
     def __init__(self):
         self.minTimestampMs = -1
         
+        if settings.CSRF_TOKEN == '':
+            raise ValueError("Please specify valid csrf token setting")
+        if settings.SESSION_ID == '':
+            raise ValueError("Please specify valid session id setting")
+        
     def write_state(self):
-        f=open(STATEFILE, 'w+')
+        f=open(settings.STATEFILE, 'w+')
         try:
             f.write(str(self.minTimestampMs))
         finally:
             f.close()
     
     def load_state(self):
-        f=open(STATEFILE, 'r+')
+        f=open(settings.STATEFILE, 'r+')
         try:
             text = f.read()
             if text:
@@ -36,14 +38,14 @@ class IngressActionMonitor():
     def getChat(self, minTimestampMs):
         url='http://www.ingress.com/rpcservice'
         
-        cookies = dict(csrftoken=CSRF_TOKEN,
-                         ACSID=SESSION_ID,
+        cookies = dict(csrftoken=settings.CSRF_TOKEN,
+                         ACSID=settings.SESSION_ID,
                           __utma="24037858.1398792667.1353108390.1354674320.1354685176.31; __utmb=24037858.24.9.1354685210580",
                           __utmc="24037858",
                           __utmz="24037858.1353108390.1.1.utmcsr=support.google.com|utmccn=(referral)|utmcmd=referral|utmcct=/ingress/answer/2871444",
                         )
         headers = {"X-Requested-With": "XMLHttpRequest",
-                   "X-CSRFToken": CSRF_TOKEN,
+                   "X-CSRFToken": settings.CSRF_TOKEN,
                    "Referer": r"http://ingress.com/intel",
                    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11"}
         data = {"desiredNumItems":50,"minLatE6":44769720,"minLngE6":-93665038,"maxLatE6":45136110,"maxLngE6":-92420150,"minTimestampMs":minTimestampMs,"maxTimestampMs":-1,"method":"dashboard.getPaginatedPlextsV2"}
@@ -80,7 +82,7 @@ class IngressActionMonitor():
             time.sleep(SLEEP_SECONDS)
 
 def log_lines():
-    f = open(LOGFILE, 'r')
+    f = open(settings.LOGFILE, 'r')
     try:
         f.seek(0,2)
         while True:
@@ -91,7 +93,7 @@ def log_lines():
         
 if __name__ == '__main__':
     monitor = IngressActionMonitor()
-    f = open(LOGFILE, 'a', 0)
+    f = open(settings.LOGFILE, 'a', 0)
     try:
         for action in monitor.monitor():
             jsonStr = json.dumps(action)
