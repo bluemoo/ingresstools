@@ -21,6 +21,9 @@ servers for new broadcasts every (configurable) 20 seconds.
 To find these values, log into the intel map, and observe the cookies sent with a rpcservice request. Copy the value
 of the ACSID cookie to SESSION_ID, and the value of the csrftoken cookie to CSRF_TOKEN.
 
+You will also need to create an empty file named 'actions.state' in the directory in which you are running the action
+logger.
+
 ## Run the action logger
 
 Once you've configured everything, actually running the logger is simple. Navigate to the src directory and run:
