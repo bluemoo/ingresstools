@@ -36,7 +36,7 @@ class IngressActionMonitor():
             f.close()
 
     def getChat(self, minTimestampMs):
-        url='http://www.ingress.com/rpcservice'
+        url='http://www.ingress.com/rpc/dashboard.getPaginatedPlextsV2'
         
         cookies = dict(csrftoken=settings.CSRF_TOKEN,
                          ACSID=settings.SESSION_ID,
