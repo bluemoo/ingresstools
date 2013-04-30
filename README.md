@@ -18,7 +18,7 @@ map first, and then provide it with your session information. Specifically, you 
 CSRF_TOKEN and SESSION_ID keys in the settings.py file. The action logger then pretends to be you, and queries the
 servers for new broadcasts every (configurable) 20 seconds.
 
-To find these values, log into the intel map, and observe the cookies sent with a rpcservice request. Copy the value
+To find these values, log into the intel map, and observe the cookies sent with a rpc request (Ideally, the request to dashboard.getPaginatedPlextsV2). Copy the value
 of the ACSID cookie to SESSION_ID, and the value of the csrftoken cookie to CSRF_TOKEN.
 
 You will also need to create an empty file named 'actions.state' in the directory in which you are running the action
